@@ -221,6 +221,7 @@ class Router
                 'actions' => $this->actions
             ]
         );
+        $this->clear();
     }
 
     private function _matchCheck($route, $real)

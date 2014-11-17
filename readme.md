@@ -1,6 +1,9 @@
 Light php routing library
 
 Composer install:
+```php
+composer install sw04/route-me
+```
 
 Initialize:
 
@@ -8,7 +11,7 @@ Initialize:
 $router = new \Router();
 ```
 
-Add route with group prefix & before action:
+Add route with group prefix & before action and match:
 
 ```php
 function auth() {
@@ -18,10 +21,18 @@ function auth() {
     return false;
 }
 
+$router = new \Router();
 $router
-    ->setPrefix('/host')
+    ->setPrefix('/admin')
     ->setAction('before', 'auth')
-    ->get('/{[0-9]+}');
+    ->get('/dashboard/{[0-9]+}')
+    ->clear();
+
+$router->get('/show/{[0-9]+}');
+
+$router->post('/api/getMoreComments/{[0-9]+}/{[0-9]+}');
+
+$router->match(getenv('REQUEST_URI'));
 ```
 
 This sample search "Host" class in root directory(DOCUMENT_ROOT).
