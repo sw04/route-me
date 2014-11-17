@@ -1,0 +1,19 @@
+{
+    "name": "sw04/route-me",
+    "description": "router with routes groups & before-after actions",
+    "minimum-stability": "dev",
+    "license": "proprietary",
+    "authors": [
+        {
+            "name": "sw04's name",
+            "email": "ufaseo@gmail.com"
+        }
+    ],
+    "autoload": {
+        "files": [
+            "Http.php",
+            "Router.php",
+            "Singleton.php"
+        ]
+    }
+}
