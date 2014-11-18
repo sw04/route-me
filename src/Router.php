@@ -1,5 +1,4 @@
 <?php
-
 /**
  * CORE
  *
@@ -41,6 +40,8 @@ class Router
     protected $method = '';
 
     protected $params = null;
+
+    protected $result = '';
 
     public function __construct()
     {
@@ -120,11 +121,13 @@ class Router
 
                         //actions after
                         $this->_execAction('after', $this->actions);
-                        $this->_sendResponse($result);
+                        $this->result = $result;
+                        return $result;
                     }
                 }
             }
         }
+        throw new RouterException('Route not found', 404);
     }
 
     public function clear()
@@ -136,19 +139,13 @@ class Router
         $this->actions = [];
     }
 
-    private function _sendResponse($result) {
-        if (!headers_sent()) {
-            if (isset($result['error']) and $result['code'] != 200) {
-
-            } else {
-                if ($result != null) {
-                    echo json_encode($result);
-                }
-            }
-        }
+    public function getResult()
+    {
+        return $this->result;
     }
 
-    private function _setClass($uri) {
+    private function _setClass($uri)
+    {
         $result = [];
         foreach ($uri as $item) {
             if (!preg_match('/{.*}/', $item)) {
@@ -162,7 +159,8 @@ class Router
         return '';
     }
 
-    private function _setMethod($uri) {
+    private function _setMethod($uri)
+    {
         $result = '';
         foreach ($uri as $item) {
             if (!preg_match('/{.*}/', $item)) {
@@ -174,7 +172,8 @@ class Router
         return $result;
     }
 
-    private function _setParams($route, $uri) {
+    private function _setParams($route, $uri)
+    {
         $result = [];
         foreach ($route as $index => $item) {
             if (array_key_exists($index, $uri)) {
@@ -223,7 +222,6 @@ class Router
                 'actions' => $this->actions
             ]
         );
-        $this->clear();
     }
 
     private function _matchCheck($route, $real)
@@ -243,7 +241,7 @@ class Router
                         $matched[$index] = 1;
                     }
                 } else {
-                    $this->class .= '\\'.$item;
+                    $this->class .= '\\' . $item;
                 }
             }
         }
@@ -255,15 +253,15 @@ class Router
         return true;
     }
 
-    private function _execute($class_name, $method, $params) {
-
+    private function _execute($class_name, $method, $params)
+    {
         if (!class_exists($class_name)) {
-            return ['error' => 'controller not defined'];
+            throw new RouterException('Controller not found', 404);
         }
 
         $Obj = new $class_name;
         if (!method_exists($Obj, $method)) {
-            return ['error' => 'method not defined'];
+            throw new RouterException('Method not found', 404);
         }
 
         $reflection = new \ReflectionMethod(
@@ -274,7 +272,7 @@ class Router
         $param_count = $reflection->getNumberOfRequiredParameters();
 
         if ($param_count > count($params)) {
-            return ['error' => 'not isset required arguments'];
+            throw new RouterException('Required arguments not isset', 500);
         }
 
         return $result = call_user_func_array(
