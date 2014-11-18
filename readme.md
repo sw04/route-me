@@ -34,6 +34,25 @@ $router
     ->clear();
 ```
 
+Simple group routes(set prefix "/admin") and add actions before route match:
+
+```php
+function isAuth() {
+    //check auth & return true or false
+    return true;
+}
+function isAdmin() {
+    //check role is admin or not & return true or false
+    return false;
+}
+$router
+    ->setPrefix('/admin')
+    ->setAction('before', 'isAuth')
+    ->setAction('before', 'isAdmin')
+    ->get('/dashboard')
+    ->clear();
+```
+
 Match routes:
 
 ```php
