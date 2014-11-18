@@ -43,8 +43,25 @@ class Router
 
     protected $result = '';
 
+    private $_defineClass = '';
+    private $_defineMethod = '';
+    private $_defineParams = '';
+
     public function __construct()
     {
+    }
+
+    public function setController($class) {
+        $this->_defineClass = $class;
+        return $this;
+    }
+    public function setMethod($method) {
+        $this->_defineMethod = $method;
+        return $this;
+    }
+    public function setParams(array $params) {
+        $this->_defineParams = $params;
+        return $this;
     }
 
     public function setPrefix($prefix)
@@ -112,6 +129,7 @@ class Router
                         //params
                         $this->params = $this->_setParams($urlParsed, $uriParsed);
 
+                        $this->_checkDefines();
                         //EXECUTE
                         $result = $this->_execute(
                             $this->class,
@@ -144,6 +162,18 @@ class Router
         return $this->result;
     }
 
+    private function _checkDefines() {
+        if ($this->class == '') {
+            $this->class = $this->_defineClass;
+        }
+        if ($this->method == '') {
+            $this->method = $this->_defineMethod;
+        }
+        if ($this->params == '') {
+            $this->params = $this->_defineParams;
+        }
+    }
+
     private function _setClass($uri)
     {
         $result = [];
@@ -152,8 +182,10 @@ class Router
                 array_push($result, $item);
             }
         }
-        if (count($result) > 1) {
-            array_pop($result);
+        if (count($result) >= 1) {
+            if (count($result) > 1) {
+                array_pop($result);
+            }
             return implode('\\', $result);
         }
         return '';
