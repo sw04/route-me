@@ -45,7 +45,7 @@ class Router
 
     private $_defineClass = '';
     private $_defineMethod = '';
-    private $_defineParams = '';
+    private $_defineParams = [];
 
     public function __construct()
     {
@@ -129,7 +129,11 @@ class Router
                         //params
                         $this->params = $this->_setParams($urlParsed, $uriParsed);
 
-                        $this->_checkDefines();
+                        $this->_checkDefines(
+                            $route['defineClass'],
+                            $route['defineMethod'],
+                            $route['defineParams']
+                        );
                         //EXECUTE
                         $result = $this->_execute(
                             $this->class,
@@ -155,6 +159,9 @@ class Router
         $this->method = '';
         $this->params = [];
         $this->actions = [];
+        $this->_defineClass = '';
+        $this->_defineMethod = '';
+        $this->_defineParams = [];
     }
 
     public function getResult()
@@ -162,15 +169,15 @@ class Router
         return $this->result;
     }
 
-    private function _checkDefines() {
+    private function _checkDefines($class, $method, $params) {
         if ($this->class == '') {
-            $this->class = $this->_defineClass;
+            $this->class = $class;
         }
         if ($this->method == '') {
-            $this->method = $this->_defineMethod;
+            $this->method = $method;
         }
-        if ($this->params == '') {
-            $this->params = $this->_defineParams;
+        if (!is_array($this->params) or empty($this->params)) {
+            $this->params = $params;
         }
     }
 
@@ -251,13 +258,19 @@ class Router
                 'prefix' => $this->prefix,
                 'url' => $url,
                 'urlParsed' => $urlParsed,
-                'actions' => $this->actions
+                'actions' => $this->actions,
+                'defineClass' => $this->_defineClass,
+                'defineMethod' => $this->_defineMethod,
+                'defineParams' => $this->_defineParams,
             ]
         );
     }
 
     private function _matchCheck($route, $real)
     {
+        if (count($route) == 0 and count($real) > 0) {
+            return false;
+        }
         $matched = [];
         foreach ($route as $index => $item) {
             $matched[$index] = 0;
@@ -265,15 +278,24 @@ class Router
                 if ($item == $real[$index]) {
                     $matched[$index] = 1;
                 }
-                $is_value = preg_match('/{.*}/', $item, $regular);
-                if ($is_value) {
-                    $real[$index] = '{' . $real[$index] . '}';
+                $isValue = preg_match('/{.*}/', $item, $regular);
+                if ($isValue) {
+                    $isOptionalValue = preg_match('/!{.*}/', $item, $regular);
+                    if ($isOptionalValue) {
+                        $real[$index] = '!{' . $real[$index];
+                    } else {
+                        $real[$index] = '{' . $real[$index];
+                    }
+                    $real[$index] .= '}';
+
                     $is_matched = preg_match('/' . $item . '/', $real[$index], $result);
                     if ($is_matched) {
                         $matched[$index] = 1;
                     }
-                } else {
-                    $this->class .= '\\' . $item;
+                }
+            } else {
+                if (preg_match('/!{.*}/', $item, $regular)) {
+                    $matched[$index] = 1;
                 }
             }
         }
