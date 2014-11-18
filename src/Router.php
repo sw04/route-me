@@ -148,7 +148,6 @@ class Router
                             $route['defineParams']
                         );
                         //EXECUTE
-                        echo $this->class;
                         $result = $this->_execute(
                             $this->class,
                             $this->method,
