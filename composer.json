@@ -10,10 +10,8 @@
         }
     ],
     "autoload": {
-        "files": [
-            "Http.php",
-            "Router.php",
-            "Singleton.php"
-        ]
+        "psr-4": {
+            "Router\\": "src/"
+        }
     }
 }

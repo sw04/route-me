@@ -11,6 +11,8 @@
  * @license  http://seoplayer.ru PRIVATE
  * @link     http://seoplayer.ru
  */
+namespace Router;
+
 class Router
 {
     /**

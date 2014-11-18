@@ -8,7 +8,7 @@ composer install sw04/route-me
 Initialize:
 
 ```php
-$router = new \Router();
+$router = \Router\Singleton::getInstance();
 ```
 
 Add route with group prefix & before action and match:
