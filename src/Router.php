@@ -204,6 +204,9 @@ class Router
             }
         }
         if (count($result) >= 1) {
+            if (count($result) > 1 and !class_exists($this->_namespace.implode('\\', $result))) {
+                array_pop($result);
+            }
             return implode('\\', $result);
         }
         return '';
@@ -282,6 +285,9 @@ class Router
         if (count($route) == 0 and count($real) > 0) {
             return false;
         }
+        if (count($route) < count($real)) {
+            return false;
+        }
         $matched = [];
         foreach ($route as $index => $item) {
             $matched[$index] = 0;
@@ -310,6 +316,7 @@ class Router
                 }
             }
         }
+
         foreach ($matched as $item) {
             if ($item == 0) {
                 return false;
