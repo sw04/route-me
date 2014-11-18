@@ -1,8 +1,9 @@
 Light php routing library
 
 Composer install:
+
 ```php
-composer install sw04/route-me
+composer require sw04/route-me
 ```
 
 Initialize:
