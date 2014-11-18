@@ -188,7 +188,7 @@ class Router
 
     private function _initRequest()
     {
-        return new \Http();
+        return new Http();
     }
 
     private function _execAction($type, $actions)
