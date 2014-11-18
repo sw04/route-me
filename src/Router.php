@@ -47,19 +47,32 @@ class Router
     private $_defineMethod = '';
     private $_defineParams = [];
 
+    private $_namespace = '\\';
+
     public function __construct()
     {
     }
 
-    public function setController($class) {
+    public function setNamespace($namespace)
+    {
+        $this->_namespace = $namespace;
+        return $this;
+    }
+
+    public function setController($class)
+    {
         $this->_defineClass = $class;
         return $this;
     }
-    public function setMethod($method) {
+
+    public function setMethod($method)
+    {
         $this->_defineMethod = $method;
         return $this;
     }
-    public function setParams(array $params) {
+
+    public function setParams(array $params)
+    {
         $this->_defineParams = $params;
         return $this;
     }
@@ -135,6 +148,7 @@ class Router
                             $route['defineParams']
                         );
                         //EXECUTE
+                        echo $this->class;
                         $result = $this->_execute(
                             $this->class,
                             $this->method,
@@ -169,7 +183,8 @@ class Router
         return $this->result;
     }
 
-    private function _checkDefines($class, $method, $params) {
+    private function _checkDefines($class, $method, $params)
+    {
         if ($this->class == '') {
             $this->class = $class;
         }
@@ -190,9 +205,6 @@ class Router
             }
         }
         if (count($result) >= 1) {
-            if (count($result) > 1) {
-                array_pop($result);
-            }
             return implode('\\', $result);
         }
         return '';
@@ -309,6 +321,7 @@ class Router
 
     private function _execute($class_name, $method, $params)
     {
+        $class_name = $this->_namespace . $class_name;
         if (!class_exists($class_name)) {
             throw new RouterException('Controller not found', 404);
         }
