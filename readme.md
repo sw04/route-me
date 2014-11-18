@@ -12,17 +12,26 @@ Initialize:
 $router = \Router\Singleton::getInstance();
 ```
 
-Simple route with required integer param:
+Simple route for GET and POST methods with required integer and string param:
 
 ```php
 $router->get('/show/{[0-9]+}'); //sample: GET /show/1024
-$router->get('/show/{[a-z]+}'); //sample: POST /show/sample
+$router->post('/show/{[a-z]+}'); //sample: POST /show/sample
 ```
 
 Simple route with not required param:
 
 ```php
 $router->get('/show/!{[0-9]+}'); //sample: GET /show or /show/1024
+```
+
+Simple route with defined controller & method:
+```php
+$router
+    ->setController('index')
+    ->setMethod('index')
+    ->get('/')
+    ->clear();
 ```
 
 Match routes:
@@ -39,9 +48,19 @@ try {
 }
 ```
 
+All routes set next requirements for routes:
 
-TODO:
+```text
+method - GET, POST, ANY
+prefix - for route url
+url - to route
+actions - before & after route match
+defineClass - define controller
+defineMethod - define method
+defineParams - define params
+```
 
-1. Add domain & sub domain support
-
-2. Add documentation
+For clear all this requirements use:
+```php
+$routes->clear();
+```
