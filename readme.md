@@ -1,4 +1,9 @@
-Light php routing library
+Light php routing library support:
+- routes
+- optional & requirements params
+- group routes
+- actions before & after route
+- define controller, method & params
 
 Composer install:
 
