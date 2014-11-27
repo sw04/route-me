@@ -79,7 +79,7 @@ class Router
 
     public function setPrefix($prefix)
     {
-        $this->prefix = str_replace('/', '', $prefix);
+        $this->prefix = $prefix;
         return $this;
     }
 
@@ -125,11 +125,15 @@ class Router
                 //uri check
                 $urlParsed = $route['urlParsed'];
                 if ($route['prefix'] != '') {
-                    array_unshift($urlParsed, $route['prefix']);
+                    $explodedPrefix = array_reverse($this->_explodeString($route['prefix']));
+                    foreach($explodedPrefix as $item) {
+                        array_unshift($urlParsed, $item);
+                    }
                 }
 
                 $uriParsed = $this->_explodeString($uri);
                 $match = $this->_matchCheck($urlParsed, $uriParsed);
+
                 if ($match) {
                     //actions
                     $before = $this->_execAction('before', $route['actions']);
