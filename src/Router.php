@@ -132,7 +132,7 @@ class Router
                 $match = $this->_matchCheck($urlParsed, $uriParsed);
                 if ($match) {
                     //actions
-                    $before = $this->_execAction('before', $this->actions);
+                    $before = $this->_execAction('before', $route['actions']);
 
                     if ($before) {
                         //class
@@ -158,6 +158,8 @@ class Router
                         $this->_execAction('after', $this->actions);
                         $this->result = $result;
                         return $result;
+                    } else {
+                        throw new RouterException('Forbidden', 403);
                     }
                 }
             }
