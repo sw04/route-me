@@ -117,6 +117,7 @@ class Router
 
     public function match($uri)
     {
+        $uri = $this->_clearUrl($uri);
         $request = $this->_initRequest();
         $method = $request->method;
 
@@ -186,6 +187,14 @@ class Router
     public function getResult()
     {
         return $this->result;
+    }
+
+    private function _clearUrl($url) {
+        $len = strpos($url, '?');
+        if ($len == 0) {
+            $len = strlen(($url));
+        }
+        return substr($url, 0, $len);
     }
 
     private function _checkDefines($class, $method, $params)
