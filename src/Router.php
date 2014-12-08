@@ -140,7 +140,7 @@ class Router
 
                     if ($before) {
                         //class
-                        $this->class = $this->_setClass($uriParsed);
+                        $this->class = $this->_setClass($urlParsed);
                         //method
                         $this->method = $this->_setMethod($urlParsed);
                         //params
@@ -209,13 +209,35 @@ class Router
                 array_push($result, $item);
             }
         }
+
         if (count($result) >= 1) {
-            if (count($result) > 1 and !class_exists($this->_namespace.implode('\\', $result))) {
-                array_pop($result);
+            $inUp = $this->_getClassInUpperCase($result);
+            if (class_exists($this->_namespace.implode('\\', $inUp))) {
+                $result = $inUp;
+            } else {
+                if (count($result) > 1 and !class_exists($this->_namespace.implode('\\', $result))) {
+                    if (class_exists($this->_namespace.implode('\\', $inUp))) {
+                        $result = $inUp;
+                    } else {
+                        array_pop($result);
+                        $inUp = $this->_getClassInUpperCase($result);
+                        if (class_exists($this->_namespace.implode('\\', $inUp))) {
+                            $result = $inUp;
+                        }
+                    }
+                }
             }
             return implode('\\', $result);
         }
         return '';
+    }
+
+    private function _getClassInUpperCase($arr)
+    {
+        $class = end($arr);
+        array_pop($arr);
+        array_push($arr, ucfirst($class));
+        return $arr;
     }
 
     private function _setMethod($uri)
